@@ -184,9 +184,9 @@ export default function PreLoginHome({ onLogin }) {
             <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest mb-6">
               BuzDealz Membership
             </div>
-            <h2 className="font-display text-[32px] font-normal leading-tight tracking-tight">
-              One membership.<br />
-              <span className="text-primary italic">Unlimited savings.</span>
+            <h2 className="text-[32px] leading-tight tracking-tight flex flex-col gap-1">
+              <span style={{ fontFamily: "'Bodoni Moda', serif", fontWeight: 700 }}>One membership.</span>
+              <span className="text-primary" style={{ fontFamily: "'Didot Display', 'Didot', serif", fontStyle: "italic" }}>Unlimited savings.</span>
             </h2>
             <p className="mt-3 text-[15px] text-white/80 leading-relaxed font-medium">
               Stop hunting for fake coupon codes. Our team negotiates direct member pricing with premium brands.

@@ -1,11 +1,11 @@
-import { Heart, ExternalLink, ShieldCheck, Lock, Clock } from 'lucide-react';
+import { Heart, ExternalLink, ShieldCheck, Lock, Clock, MessageSquareQuote } from 'lucide-react';
 import { useState } from 'react';
 
 function formatPrice(price) {
   return '₹' + price.toLocaleString('en-IN');
 }
 
-export default function DealCard({ deal, locked = false, compact = false, isSaved, onToggleSave }) {
+export default function DealCard({ deal, locked = false, compact = false, isSaved, onToggleSave, onRate }) {
   const [localSaved, setLocalSaved] = useState(false);
   const saved = isSaved !== undefined ? isSaved : localSaved;
   const toggleSaved = (e) => {
@@ -84,12 +84,23 @@ export default function DealCard({ deal, locked = false, compact = false, isSave
             <span className="text-[11px] font-medium text-text-muted line-through">{formatPrice(deal.originalPrice)}</span>
           </div>
 
-          {/* Savings strip */}
+          {/* Savings strip & Rate */}
           {!locked && (
-            <div className="mt-1">
+            <div className="mt-1 flex items-center justify-between">
               <span className="text-[11px] font-bold text-success">
                 You save {formatPrice(savings)}
               </span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onRate) onRate(deal);
+                }}
+                className="flex items-center gap-1 text-[10px] font-bold text-text-secondary hover:text-primary transition-colors"
+                aria-label="Rate this deal"
+              >
+                <MessageSquareQuote className="h-3 w-3" />
+                Review
+              </button>
             </div>
           )}
 

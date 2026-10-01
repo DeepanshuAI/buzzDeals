@@ -4,6 +4,7 @@ import CategoryScroller from '../components/CategoryScroller';
 import DealCard from '../components/DealCard';
 import BrandCard from '../components/BrandCard';
 import SectionHeader from '../components/SectionHeader';
+import TestimonialSection from '../components/TestimonialSection';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import { deals, categories, brands, stats, howItWorks } from '../data/deals';
 
@@ -156,6 +157,9 @@ export default function PreLoginHome({ onLogin }) {
             </div>
           </div>
         </section>
+
+        {/* Testimonials */}
+        <TestimonialSection onLoginRequest={onLogin} />
 
         {/* How It Works */}
         <section className="px-4 py-5">

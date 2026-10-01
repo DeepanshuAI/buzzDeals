@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, User, Flame, Clock, ArrowRight, ExternalLink, BadgePercent, Heart, History } from 'lucide-react';
+import { Bell, User, Flame, Clock, ArrowRight, ExternalLink, BadgePercent, Heart, History, Settings, ChevronRight, MessageSquareQuote } from 'lucide-react';
 import SearchBar from '../components/SearchBar';
 import CategoryScroller from '../components/CategoryScroller';
 import DealCard from '../components/DealCard';
@@ -7,6 +7,8 @@ import BrandCard from '../components/BrandCard';
 import SectionHeader from '../components/SectionHeader';
 import BottomNavigation from '../components/BottomNavigation';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import AppFeedbackPrompt from '../components/AppFeedbackPrompt';
+import DealReviewModal from '../components/DealReviewModal';
 import { deals, categories, brands } from '../data/deals';
 
 function formatPrice(price) {
@@ -16,6 +18,8 @@ function formatPrice(price) {
 export default function PostLoginHome({ onLogout }) {
   const [activeTab, setActiveTab] = useState('home');
   const [savedDealIds, setSavedDealIds] = useState(new Set());
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [dealToReview, setDealToReview] = useState(null);
 
   const toggleSave = (id) => {
     setSavedDealIds(prev => {
@@ -27,6 +31,20 @@ export default function PostLoginHome({ onLogout }) {
       }
       return newSet;
     });
+
+    // Meaningful interaction trigger for App Feedback
+    const lastPrompt = localStorage.getItem('buzdealz_last_feedback_prompt');
+    const lastSubmit = localStorage.getItem('buzdealz_last_feedback_submit');
+    const now = new Date().getTime();
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    if (!lastSubmit && (!lastPrompt || now - parseInt(lastPrompt) > twentyFourHours)) {
+      // Trigger after a short natural delay
+      setTimeout(() => {
+        setIsFeedbackOpen(true);
+        // We set prompt time when opened, so closing counts as skip
+      }, 1500);
+    }
   };
   const trendingDeals = deals.filter((d) => d.trending);
   const endingSoonDeals = deals.filter((d) => d.endingSoon);
@@ -189,7 +207,7 @@ export default function PostLoginHome({ onLogout }) {
             <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-2 pr-4 snap-x snap-mandatory">
               {trendingDeals.map((deal) => (
                 <div key={deal.id} className="w-[220px] shrink-0 snap-start">
-                  <DealCard deal={deal} compact isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} />
+                  <DealCard deal={deal} compact isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} onRate={setDealToReview} />
                 </div>
               ))}
             </div>
@@ -205,7 +223,7 @@ export default function PostLoginHome({ onLogout }) {
           />
           <div className="mt-4 grid grid-cols-2 gap-3">
             {memberDeals.slice(0, 4).map((deal) => (
-              <DealCard key={deal.id} deal={deal} isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} />
+              <DealCard key={deal.id} deal={deal} isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} onRate={setDealToReview} />
             ))}
           </div>
         </section>
@@ -218,7 +236,7 @@ export default function PostLoginHome({ onLogout }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {deals.filter(d => d.memberPrice < 2000).slice(0, 4).map((deal) => (
-              <DealCard key={deal.id} deal={deal} isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} />
+              <DealCard key={deal.id} deal={deal} isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} onRate={setDealToReview} />
             ))}
           </div>
           <button className="mt-4 w-full py-3 text-sm font-bold text-primary bg-surface rounded-xl shadow-sm border border-border/50 transition-all hover:bg-primary/5 active:scale-[0.98]">
@@ -296,7 +314,7 @@ export default function PostLoginHome({ onLogout }) {
             <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-2 pr-4 snap-x snap-mandatory">
               {deals.filter(d => d.category === 'Fashion').map((deal) => (
                 <div key={deal.id} className="w-[220px] shrink-0 snap-start">
-                  <DealCard deal={deal} compact isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} />
+                  <DealCard deal={deal} compact isSaved={savedDealIds.has(deal.id)} onToggleSave={toggleSave} onRate={setDealToReview} />
                 </div>
               ))}
             </div>
@@ -325,10 +343,57 @@ export default function PostLoginHome({ onLogout }) {
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 {deals.filter(d => savedDealIds.has(d.id)).map(deal => (
-                  <DealCard key={deal.id} deal={deal} isSaved={true} onToggleSave={toggleSave} />
+                  <DealCard key={deal.id} deal={deal} isSaved={true} onToggleSave={toggleSave} onRate={setDealToReview} />
                 ))}
               </div>
             )}
+          </section>
+        ) : activeTab === 'profile' ? (
+          <section className="px-4 py-6 animate-in fade-in">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/20">
+                <User className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-text-primary tracking-tight">Priya</h2>
+                <p className="text-[13px] text-text-secondary mt-0.5">BuzDealz Member</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-[20px] border border-border bg-surface overflow-hidden shadow-sm">
+                <button 
+                  onClick={() => setIsFeedbackOpen(true)}
+                  className="flex w-full items-center justify-between p-4 transition-colors hover:bg-surface-elevated active:bg-border/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                      <MessageSquareQuote className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[15px] font-bold text-text-primary">Feedback & Reviews</p>
+                      <p className="text-[12px] text-text-secondary mt-0.5">Share your experience with BuzDealz</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-text-muted" />
+                </button>
+              </div>
+
+              <div className="rounded-[20px] border border-border bg-surface overflow-hidden shadow-sm">
+                <button className="flex w-full items-center justify-between p-4 transition-colors hover:bg-surface-elevated">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-border/40">
+                      <Settings className="h-5 w-5 text-text-secondary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[15px] font-bold text-text-primary">Settings</p>
+                      <p className="text-[12px] text-text-secondary mt-0.5">Account, notifications</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-text-muted" />
+                </button>
+              </div>
+            </div>
           </section>
         ) : (
           <div className="px-4 py-12 text-center">
@@ -346,6 +411,18 @@ export default function PostLoginHome({ onLogout }) {
 
       {/* Bottom Navigation */}
       <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      <AppFeedbackPrompt 
+        isOpen={isFeedbackOpen} 
+        onClose={() => setIsFeedbackOpen(false)} 
+      />
+      
+      <DealReviewModal
+        isOpen={!!dealToReview}
+        onClose={() => setDealToReview(null)}
+        deal={dealToReview}
+        isLoggedIn={true}
+      />
     </div>
   );
 }

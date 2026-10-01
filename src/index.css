@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-page-bg: var(--page-bg);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-urgency: var(--urgency);
+  --color-deep-plum: #241721;
+
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+}
+
+@layer base {
+  :root {
+    --primary: #E83E73;
+    --primary-light: #F8E4EB;
+    --primary-dark: #C42655;
+    --surface: #FFFFFF;
+    --surface-elevated: #FFFFFF;
+    --page-bg: #FAF8F8;
+    --text-primary: #17151B;
+    --text-secondary: #747078;
+    --text-muted: #A39E93;
+    --border: #E8E2E5;
+    --success: #2E7D5B;
+    --urgency: #C55A3D;
+  }
+
+  .dark {
+    --primary: #FF6B98;
+    --primary-light: rgba(255, 107, 152, 0.15);
+    --primary-dark: #E83E73;
+    --surface: #1A171D;
+    --surface-elevated: #211D24;
+    --page-bg: #121016;
+    --text-primary: #F5F2F4;
+    --text-secondary: #AAA2AB;
+    --text-muted: #6B656F;
+    --border: #302A32;
+    --success: #34D399;
+    --urgency: #FF8A65;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-padding-top: 72px;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    background-color: var(--color-page-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Hide scrollbars for horizontal scrollers */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
